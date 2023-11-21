@@ -3,10 +3,13 @@ import java.lang.NumberFormatException
 
 fun main(args: Array<String>) {
     var itemlist = mutableListOf<Item>()
+    var n = 0
     val db = Db()
     db.create()
     itemlist = db.fetchItems().toMutableList()
-
+    if (!itemlist.isEmpty()) {
+        n = itemlist.last().id + 1
+    }
 
     while (true) {
         println("Task Manager")
@@ -36,8 +39,9 @@ fun main(args: Array<String>) {
                 println("Priority:")
                 val prty = readln()
                 println()
-                val item = Item(title, desc, date, prty, "TO DO")
-                db.insert(title, desc, date, prty)
+                val item = Item(title, desc, date, prty, "TO DO", n)
+                db.insert(title, desc, date, prty, n)
+                n += 1
                 println("New item added: " + item.title)
                 itemlist.add(item)
                 Thread.sleep(2_000)
@@ -93,34 +97,34 @@ fun main(args: Array<String>) {
                 if (inp2.toInt() == 1) {
                     println("Enter a new title: ")
                     val nt = readln()
-                    db.update("title", itemlist[inp].title, nt)
+                    db.update("title", itemlist[inp].id, nt)
                     itemlist[inp].title = nt
                     println("Updated.")
                     Thread.sleep(2_000)
                 } else if (inp2.toInt() == 2) {
                     println("Enter a new description: ")
                     val nt = readln()
-                    db.update("desc", itemlist[inp].title, nt)
+                    db.update("desc", itemlist[inp].id, nt)
                     itemlist[inp].desc = nt
                     println("Updated.")
                     Thread.sleep(2_000)
                 } else if (inp2.toInt() == 3) {
                     println("Enter a new due date: ")
                     val nt = readln()
-                    db.update("date", itemlist[inp].title, nt)
+                    db.update("date", itemlist[inp].id, nt)
                     itemlist[inp.toInt()].date = nt
                     println("Updated.")
                     Thread.sleep(2_000)
                 } else if (inp2.toInt() == 4) {
                     println("Enter a new priority: ")
                     val nt = readln()
-                    db.update("prty", itemlist[inp].title, nt)
+                    db.update("prty", itemlist[inp].id, nt)
                     itemlist[inp].prty = nt
                     println("Updated.")
                     Thread.sleep(2_000)
                 } else if (inp2.toInt() == 5) {
                     println("Status changed to 'Done'")
-                    db.update("status", itemlist[inp].title, "Done")
+                    db.update("status", itemlist[inp].id, "Done")
                     itemlist[inp].status = "Done"
                     Thread.sleep(2_000)
                 } else {
@@ -133,7 +137,7 @@ fun main(args: Array<String>) {
                 lister(itemlist)
                 println()
                 val inp = readln().toInt() - 1
-                db.delete(itemlist[inp].title)
+                db.delete(itemlist[inp].id)
                 itemlist.remove(itemlist[inp])
                 println("Task removed.")
                 Thread.sleep(2_000)
